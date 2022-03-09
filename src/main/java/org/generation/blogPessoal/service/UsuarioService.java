@@ -19,7 +19,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
 
-    public Usuario CadastrarUsuario(Usuario usuario) {
+    public Optional<Usuario> CadastrarUsuario(Usuario usuario) {
     	
     	Optional<Usuario> usuarioM = repository.findByUsuario(usuario.getUsuario());
 
@@ -34,7 +34,7 @@ public class UsuarioService {
             String passwordEncoder = encoder.encode(usuario.getSenha());
             usuario.setSenha(passwordEncoder);
 
-            return repository.save(usuario);
+            return Optional.ofNullable(repository.save(usuario));
         }
             
       
