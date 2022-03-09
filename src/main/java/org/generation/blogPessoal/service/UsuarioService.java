@@ -8,8 +8,10 @@ import org.generation.blogPessoal.model.UserLogin;
 import org.generation.blogPessoal.model.Usuario;
 import org.generation.blogPessoal.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UsuarioService {
@@ -18,12 +20,24 @@ public class UsuarioService {
     private UsuarioRepository repository;
 
     public Usuario CadastrarUsuario(Usuario usuario) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    	
+    	Optional<Usuario> usuarioM = repository.findByUsuario(usuario.getUsuario());
 
-        String senhaEncoder = encoder.encode(usuario.getSenha());
-        usuario.setSenha(senhaEncoder);
+        if (usuarioM.isPresent()) {
 
-        return repository.save(usuario);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email ja cadastrado");
+
+        } else {
+
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+            String passwordEncoder = encoder.encode(usuario.getSenha());
+            usuario.setSenha(passwordEncoder);
+
+            return repository.save(usuario);
+        }
+            
+      
     }
 
     public Optional<UserLogin> Logar(Optional<UserLogin> user) {
@@ -34,8 +48,8 @@ public class UsuarioService {
             if (encoder.matches(user.get().getSenha(), usuario.get().getSenha())) {
 
                 String auth = user.get().getUsuario() + ":" + user.get().getSenha();
-                byte[] encondeAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
-                String authHeader ="Basic " + new String(encondeAuth);
+                byte[] encodeAuth = Base64.encodeBase64(auth.getBytes(Charset.forName("US-ASCII")));
+                String authHeader ="Basic " + new String(encodeAuth);
 
                 user.get().setToken(authHeader);
                 user.get().setNome(usuario.get().getNome());
