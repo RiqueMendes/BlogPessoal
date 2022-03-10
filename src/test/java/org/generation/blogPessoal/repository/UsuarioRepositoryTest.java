@@ -1,7 +1,9 @@
 package org.generation.blogPessoal.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.generation.blogPessoal.model.Usuario;
@@ -35,4 +37,14 @@ public class UsuarioRepositoryTest {
 		Optional<Usuario> usuario = usuarioRepository.findByUsuario("joao@email.com.br");
 		assertTrue(usuario.get().getUsuario().equals("joao@email.com.br"));
 	}
-}
+	@Test
+	@DisplayName("Retorna 3 usuario")
+		public void deveRetornarTresUsuario() {
+			List<Usuario> listadeUsuarios = usuarioRepository.findAllByNomeContainingIgnoreCase("Silva");
+			assertEquals(3, listadeUsuarios.size());
+			assertTrue(listadeUsuarios.get(0).getNome().equals("Joao da Silva"));
+			assertTrue(listadeUsuarios.get(1).getNome().equals("Manuela da Silva"));
+			assertTrue(listadeUsuarios.get(2).getNome().equals("Adriana da Silva"));
+		}
+	}
+
