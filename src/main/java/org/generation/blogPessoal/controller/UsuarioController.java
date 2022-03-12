@@ -53,6 +53,10 @@ public class UsuarioController {
     	return usuarioService.CadastrarUsuario(usuario).map(resp -> ResponseEntity.status(201).body(resp))
               .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
-  
-    
+    @PutMapping("/atualizar")
+	public ResponseEntity<Usuario> putUsuario(@Valid @RequestBody Usuario usuario){
+		return usuarioService.atualizarUsuario(usuario)
+			.map(resp -> ResponseEntity.status(HttpStatus.OK).body(resp))
+			.orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
+    }
 }
